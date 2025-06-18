@@ -1,0 +1,36 @@
+# Ignore build directories
+
+
+# Ignore CMake cache and configuration files
+# TODO: move it according to the project basis
+CMakeCache.txt
+CMakeFiles/
+CMakeLists.txt.user
+CMakeLists.txt.user.*
+
+# Ignore compiled object files and executables
+*.o
+*.obj
+*.so
+*.a
+*.lib
+*.dll
+*.exe
+*.out
+
+# Ignore Emacs backup and autosave files
+*~
+\#*\#
+.\#*
+
+# Ignore IDE-specific files
+.vscode/
+.idea/
+
+# Ignore system-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore other generated files
+compile_commands.json
+Makefile
