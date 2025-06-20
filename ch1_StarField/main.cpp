@@ -29,9 +29,23 @@ static SDL_FPoint stars_prev_coordinates[stars_count];
 static SDL_FPoint stars_final_coordinates[stars_count];
 int stars_speed_factor[stars_count];
 
+//////// utility functions
 SDL_FPoint center_it(const SDL_FPoint point) {
   return SDL_FPoint{point.x + (win_width / 2), point.y + (win_height / 2)};
 }
+
+float map(float i, float x1, float y1, float x2, float y2) {
+  return ((y2 - x2) * ((i - x1) / (y1 - x1)));
+}
+
+void init_star(const int i) {
+  /*  coordinates are from negative-screen limit to positive-screen limit */
+  stars_init_coordinates[i].x = SDL_rand(2 * win_width) - (win_width);
+  stars_init_coordinates[i].y = SDL_rand(2 * win_height) - (win_height);
+  stars_prev_coordinates[i] = center_it(stars_init_coordinates[i]);
+  stars_speed_factor[i] = SDL_rand(win_width) + 1;
+}
+////////////////
 
 /* This function runs once at startup. */
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) {
@@ -50,11 +64,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) {
   }
 
   for (auto i = 0u; i < stars_count; ++i) {
-    /*  coordinates are from -screen limit to +screen limit */
-    stars_init_coordinates[i].x = SDL_rand(2 * win_width) - (win_width);
-    stars_init_coordinates[i].y = SDL_rand(2 * win_height) - (win_height);
-    stars_prev_coordinates[i] = center_it(stars_init_coordinates[i]);
-    stars_speed_factor[i] = SDL_rand(win_width) + 1;
+    init_star(i);
   }
 
   return SDL_APP_CONTINUE; /* carry on with the program! */
@@ -67,14 +77,6 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) {
   }
   return SDL_APP_CONTINUE; /* carry on with the program! */
 }
-
-///////// program stuff
-
-float map(float i, float x1, float y1, float x2, float y2) {
-  return ((y2 - x2) * ((i - x1) / (y1 - x1)));
-}
-
-////////////////////////
 
 /* This function runs once per frame, and is the heart of the program. */
 SDL_AppResult SDL_AppIterate(void *appstate) {
@@ -89,10 +91,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) {
 
     /* reset stars which are out of window */
     if (stars_speed_factor[i] < 1) {
-      stars_init_coordinates[i].x = SDL_rand(2 * win_width) - (win_width);
-      stars_init_coordinates[i].y = SDL_rand(2 * win_height) - (win_height);
-      stars_prev_coordinates[i] = center_it(stars_init_coordinates[i]);
-      stars_speed_factor[i] = SDL_rand(win_width) + 1;
+      init_star(i);
     }
 
     stars_final_coordinates[i].x =
